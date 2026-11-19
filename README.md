@@ -1,4 +1,4 @@
-# Surfer’s Series One — Simulador universal de motorreductores y banda
+# Simulador universal de motorreductores y banda
 
 Aplicación web estática para visualizar una banda continua con cerdas accionada por un motorreductor DC. Incluye modo Cliente e Ingeniería, selector Español / English, indicadores de giro, campos con ayudas y exportación de candidatos.
 
