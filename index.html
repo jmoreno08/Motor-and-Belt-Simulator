@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <title>
+   Surfer’s Series One | Simulador de banda
+  </title>
+  <link href="./assets/css/styles.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <main class="wrap">
+   <header>
+    <div>
+     <div class="eyebrow">
+      EX-00579 · Surfer’s Series One
+     </div>
+     <h1>
+      Simulador de motor y banda
+     </h1>
+     <p>
+      Visualiza la velocidad de las cerdas y compara configuraciones de cualquier fabricante.
+     </p>
+    </div>
+    <div class="header-actions">
+     <div aria-label="Idioma / Language" class="language-switch" role="group">
+      <button aria-pressed="true" id="langEs" type="button">
+       ES
+      </button>
+      <button aria-pressed="false" id="langEn" type="button">
+       EN
+      </button>
+     </div>
+     <div class="pill">
+      Simulación cinemática · V14
+     </div>
+    </div>
+   </header>
+   <nav aria-label="Modo de simulación" class="tabs">
+    <button class="tab active" id="clientTab">
+     ▶ Modo cliente
+    </button>
+    <button class="tab" id="engTab">
+     ⚙ Modo ingeniería
+    </button>
+   </nav>
+   <div class="layout">
+    <section class="panel">
+     <h2>
+      Configuración
+     </h2>
+     <div class="sub">
+      Introduce los valores de la ficha técnica y del rodillo de arrastre.
+     </div>
+     <div class="fields">
+      <div class="field wide eng">
+       <label>
+        Referencia / fabricante
+        <button aria-label="Ayuda referencia" class="help" data-tip="Nombre o código del motorreductor. Es solo una etiqueta para identificar la prueba.">
+         ?
+        </button>
+       </label>
+       <input id="name" value="Motor DC genérico"/>
+      </div>
+      <div class="field">
+       <label>
+        Voltaje nominal (V)
+        <button aria-label="Ayuda voltaje nominal" class="help" data-tip="Voltaje de funcionamiento especificado por el fabricante; por ejemplo, 3 V, 6 V o 12 V.">
+         ?
+        </button>
+       </label>
+       <input id="vn" min="0.1" step="0.1" type="number" value="6"/>
+      </div>
+      <div class="field">
+       <label>
+        RPM sin carga
+        <button aria-label="Ayuda RPM sin carga" class="help" data-tip="Velocidad del eje de salida del motorreductor, sin carga, al voltaje nominal. Busca No-load speed o Rotation speed (RPM). No introduzcas las RPM internas antes de la reductora.">
+         ?
+        </button>
+       </label>
+       <input id="n0" min="1" step="1" type="number" value="500"/>
+      </div>
+      <div class="field">
+       <label>
+        RPM nominales
+        <button aria-label="Ayuda RPM nominales" class="help" data-tip="Velocidad del eje de salida a carga nominal y voltaje nominal. Busca Rated load → Rotation speed. Si no la conoces, deja el campo vacío; la simulación visual funcionará sin carga.">
+         ?
+        </button>
+       </label>
+       <input id="nn" min="0" placeholder="Opcional" step="1" type="number" value="400"/>
+      </div>
+      <div class="field">
+       <label>
+        Diámetro rodillo (mm)
+        <button aria-label="Ayuda diámetro" class="help" data-tip="Diámetro efectivo del rodillo motriz donde hace contacto con la banda, en milímetros. No es el diámetro del eje metálico.">
+         ?
+        </button>
+       </label>
+       <input id="d" min="0.1" step="0.5" type="number" value="20"/>
+      </div>
+     </div>
+     <div class="section">
+      Control de velocidad
+     </div>
+     <div class="range-row">
+      <span>
+       Voltaje aplicado
+       <button aria-label="Ayuda voltaje aplicado" class="help" data-tip="Voltaje medio efectivo aplicado al motor en esta aproximación. El control llega hasta el voltaje nominal; el comportamiento real con PWM y bajo carga puede ser diferente.">
+        ?
+       </button>
+      </span>
+      <strong id="vText">
+       6.0 V
+      </strong>
+     </div>
+     <input aria-label="Voltaje aplicado" id="v" max="6" min="0" step="0.1" type="range" value="6"/>
+     <div class="small">
+      0 V
+      <span id="vMax" style="float:right">
+       6 V
+      </span>
+     </div>
+     <div class="eng">
+      <div class="section">
+       Carga y características del motor
+      </div>
+      <div class="fields">
+       <div class="field">
+        <label>
+         Torque nominal (kg·cm)
+         <button aria-label="Ayuda torque nominal" class="help" data-tip="Par de salida del motorreductor a carga nominal, según la ficha técnica. Se usa junto con las RPM nominales para interpolar la caída de velocidad. No confundir con torque de bloqueo.">
+          ?
+         </button>
+        </label>
+        <input id="tn" min="0" step="0.01" type="number" value="0.5"/>
+       </div>
+       <div class="field">
+        <label>
+         Carga requerida (kg·cm)
+         <button aria-label="Ayuda carga" class="help" data-tip="Torque resistente total estimado o medido en el rodillo motriz: fricción de banda, engranajes externos y contacto con el cabello. Usa 0 para sin carga.">
+          ?
+         </button>
+        </label>
+        <input id="load" min="0" step="0.01" type="number" value="0.2"/>
+       </div>
+       <div class="field">
+        <label>
+         Corriente sin carga (A)
+         <button aria-label="Ayuda corriente sin carga" class="help" data-tip="Corriente que consume el motor a voltaje nominal sin carga. Si la ficha dice 150 mA, escribe 0.15 A.">
+          ?
+         </button>
+        </label>
+        <input id="i0" min="0" step="0.01" type="number" value="0.15"/>
+       </div>
+       <div class="field">
+        <label>
+         Corriente nominal (A)
+         <button aria-label="Ayuda corriente nominal" class="help" data-tip="Corriente a la carga nominal, indicada en la ficha técnica. Se usa para una interpolación aproximada de consumo.">
+          ?
+         </button>
+        </label>
+        <input id="in" min="0" step="0.01" type="number" value="0.3"/>
+       </div>
+       <div class="field">
+        <label>
+         Distancia entre ejes (mm)
+         <button aria-label="Ayuda distancia" class="help" data-tip="Distancia entre el centro del rodillo motriz y el centro del eje guía. Cambia la geometría dibujada, no la velocidad lineal.">
+          ?
+         </button>
+        </label>
+        <input id="centers" min="10" step="1" type="number" value="65"/>
+       </div>
+       <div class="field">
+        <label>
+         Separación de cerdas (mm)
+         <button aria-label="Ayuda separación" class="help" data-tip="Distancia entre grupos consecutivos de cerdas medida a lo largo de la banda. Determina cuántos grupos pasan por segundo.">
+          ?
+         </button>
+        </label>
+        <input id="pitch" min="1" step="1" type="number" value="8"/>
+       </div>
+      </div>
+     </div>
+     <div class="controls">
+      <button class="action primary" id="play">
+       ▶ Iniciar
+      </button>
+      <button class="action" id="pause">
+       Ⅱ Pausar
+      </button>
+      <button class="action" id="stop">
+       ■ Detener
+      </button>
+     </div>
+     <div class="status" id="status">
+      Listo para iniciar.
+     </div>
+    </section>
+    <section class="panel">
+     <h2>
+      Banda con cerdas · movimiento continuo
+     </h2>
+     <div class="sub">
+      Eje motriz a la izquierda, eje guía a la derecha. Las cerdas se distribuyen por todo el recorrido: tramos rectos y curvas alrededor de ambos ejes. Permanecen rectas y orientadas perpendicularmente a la banda. La velocidad no se ralentiza.
+     </div>
+     <div class="stage">
+      <canvas aria-label="Representación animada de la banda continua con cerdas y dos rodillos" id="scene">
+      </canvas>
+      <div class="stage-note">
+       A velocidades elevadas pueden aparecer efectos estroboscópicos por la frecuencia de refresco de la pantalla.
+      </div>
+     </div>
+     <div class="metrics">
+      <div class="metric">
+       <small>
+        Velocidad del eje
+       </small>
+       <b id="rpm">
+        0
+       </b>
+       <em>
+        RPM
+       </em>
+      </div>
+      <div class="metric">
+       <small>
+        Velocidad de banda
+       </small>
+       <b id="speed">
+        0
+       </b>
+       <em>
+        cm/s
+       </em>
+      </div>
+      <div class="metric">
+       <small>
+        Paso de cerdas
+       </small>
+       <b id="freq">
+        0
+       </b>
+       <em>
+        Hz
+       </em>
+      </div>
+     </div>
+     <div class="eng">
+      <div class="metrics">
+       <div class="metric">
+        <small>
+         Torque aplicado
+        </small>
+        <b id="torque">
+         —
+        </b>
+        <em>
+         kg·cm
+        </em>
+       </div>
+       <div class="metric">
+        <small>
+         Corriente estimada
+        </small>
+        <b id="current">
+         —
+        </b>
+        <em>
+         A
+        </em>
+       </div>
+       <div class="metric">
+        <small>
+         Caída de velocidad
+        </small>
+        <b id="drop">
+         —
+        </b>
+        <em>
+         %
+        </em>
+       </div>
+      </div>
+      <div class="notice" id="engineeringNote">
+      </div>
+     </div>
+     <div class="notice" style="margin-top:13px">
+      La velocidad es una estimación cinemática. La preferencia visual del cliente no valida seguridad, ausencia de atrapamiento ni desempeño real sobre el cabello.
+     </div>
+     <div class="section">
+      Selección del cliente
+     </div>
+     <div class="controls">
+      <button class="action primary" id="save">
+       ☆ Guardar velocidad candidata
+      </button>
+      <button class="action" id="export">
+       ↓ Exportar CSV
+      </button>
+      <button class="action" id="clear">
+       Limpiar
+      </button>
+     </div>
+     <div class="table-wrap">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          Motor
+         </th>
+         <th>
+          Voltaje
+         </th>
+         <th>
+          RPM
+         </th>
+         <th>
+          Velocidad
+         </th>
+         <th>
+          Modo
+         </th>
+        </tr>
+       </thead>
+       <tbody id="records">
+        <tr>
+         <td class="small" colspan="5">
+          Aún no hay velocidades guardadas.
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </section>
+   </div>
+   <p class="small foot">
+    Modelo aproximado: RPM sin carga proporcionales al voltaje; en modo ingeniería, caída lineal entre los puntos sin carga y nominal cuando los datos son válidos. No incluye arranque, inercia, saturación, pérdidas por deslizamiento, calentamiento ni limitaciones de corriente. Para ingeniería definitiva se requieren curvas del fabricante y pruebas de banco.
+   </p>
+  </main>
+  <script src="./assets/js/simulator.js">
+  </script>
+  <script src="./assets/js/i18n.js">
+  </script>
+ </body>
+</html>
